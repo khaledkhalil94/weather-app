@@ -13,27 +13,35 @@ import {getWeatherData} from '../api';
 import {enqueueSnackbar} from 'notistack';
 
 const generateLocationId = (): LocationId => String(Math.round(Math.random() * 1000000));
+const LOCATION_TIMEOUT = 5 * 1000;
+
+const handleCurrentLocationSuccess = (position: GeolocationPosition) => {
+  const currentLocation = {
+    id: CURRENT_LOCATION_ID,
+    lat: position.coords.latitude,
+    lng: position.coords.longitude,
+    name: 'Current Location',
+  };
+  switchLocation(currentLocation);
+  setCurrentLocationStatus('SUCCESS');
+};
+
+const handleCurrentLocationError = () => {
+  enqueueSnackbar("Couldn't get current position!", {
+    variant: 'warning',
+    preventDuplicate: true,
+  });
+  switchLocation(DEFAULT_LOCATION);
+  setCurrentLocationStatus('FAIL');
+};
 
 export const getCurrentLocation = () => {
   setCurrentLocationStatus('LOADING');
   navigator.geolocation.getCurrentPosition(
-    position => {
-      const currentLocation = {
-        id: CURRENT_LOCATION_ID,
-        lat: position.coords.latitude,
-        lng: position.coords.longitude,
-        name: 'Current Location',
-      };
-      switchLocation(currentLocation);
-      setCurrentLocationStatus('SUCCESS');
-    },
-    () => {
-      enqueueSnackbar("Couldn't get current position!", {
-        variant: 'warning',
-        preventDuplicate: true,
-      });
-      switchLocation(DEFAULT_LOCATION);
-      setCurrentLocationStatus('FAIL');
+    handleCurrentLocationSuccess,
+    handleCurrentLocationError,
+    {
+      timeout: LOCATION_TIMEOUT,
     },
   );
 };

@@ -45,7 +45,10 @@ Run `yarn` before starting.
 
 ### Add OpenWeatherData AppId
 - Generate API key from https://openweathermap.org/
-- Add the key to `/.env.local` file
+- Add the key to `/.env.local` file (env key: `APP_ID`)
+```
+APP_ID=xxxxx
+```
 
 ---
 
@@ -74,3 +77,5 @@ Open [http://localhost:3000](http://localhost:6006) to view it in the browser.
 ---
 
 ## Known Issues
+* I had some challenges finding a good geo API, so I ended up with an API that returns lots of cities data for some countries, which may slow down the UI performance.
+* For some mysterious reasons, the main page unmounts on initial load, so it mounts twice, which leads to calling the API 2 times.
